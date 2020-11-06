@@ -7,7 +7,7 @@ beautifulsoup4
 pyLDAvis
 apiclient
 pandas
-werkzeug
+werkzeug==0.16.0
 google-api-python-client
 afinn
 matplotlib 
