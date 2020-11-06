@@ -7,7 +7,7 @@ beautifulsoup4
 pyLDAvis
 apiclient
 pandas
-pprint
+werkzeug
 google-api-python-client
 afinn
 matplotlib 
