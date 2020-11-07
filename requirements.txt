@@ -15,4 +15,4 @@ numpy
 oauth2client
 nltk
 tensorflow
-
+tensorflow_hub
