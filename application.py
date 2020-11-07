@@ -33,16 +33,7 @@ def result():
       s=""
       for key, value in result.items():
           s=value
-      ss=running_youtube.main(s)
-      print("ss is",ss)
-      print("ss is",type(ss))
-      img_url=[]
-      url1=[]
-      for video in ss:
-            urls = "https://img.youtube.com/vi/"+video[0]+"/maxresdefault.jpg"
-            img_url.append(urls)
-            url_video="https://www.youtube.com/watch?v="+video[0]
-            url1.append(url_video)
-      return render_template("result.html",result = url1,url=img_url)
+      ss=running_youtube.computeSimilarity("What is operating system?","An operating system is an interface between user ard hand Wave. It provides various functionally as process management, file management, memory management , It works like a government in real life .",s)
+      return render_template("result.html",result = ss,url=img_url)
 if __name__ == "__main__":
     app.run(debug=True)
