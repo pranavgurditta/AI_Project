@@ -1,13 +1,16 @@
 import json
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
-import numpy as np
+import os
 import sys
 import requests
 import time
+
+import json
+import tensorflow.compat.v1 as tf
+import tensorflow_hub as hub
+import numpy as np
+
 import os
 from sklearn.metrics.pairwise import cosine_similarity,cosine_distances
-
 # If you are using a Jupyter notebook, uncomment the following line.
 # %matplotlib inline
 import matplotlib.pyplot as plt
@@ -15,7 +18,24 @@ from matplotlib.patches import Polygon
 from PIL import Image
 from io import BytesIO
 
+graph = tf.Graph()
+print("Downloading pre-trained embeddings from tensorflow hub...")
+tf.disable_eager_execution()
+embed = hub.Module("https://tfhub.dev/google/universal-sentence-encoder/2")
+text_ph = tf.placeholder(tf.string)
+embeddings = embed(text_ph)
+print("Done.")
+
+print("Creating tensorflow session...")
+session = tf.Session()
+session.run(tf.global_variables_initializer())
+session.run(tf.tables_initializer())
+print("Done.")
+
+
 questionAnswerList = {"What is operating system?": "An operating system (OS) is system software that manages computer hardware, software resources, and provides common services for computer programs. Time-sharing operating systems schedule tasks for efficient use of the system and may also include accounting software for cost allocation of processor time, mass storage, printing, and other resources.", "Study Test": "I will study and work hard."}
+
+
 
 def createTensorflowSession():
     graph = tf.Graph()
@@ -96,21 +116,24 @@ def ocrComputation(image_url):
     
         for i in range(0, len(analysis["analyzeResult"]["readResults"][0]["lines"])):
             answer_text = answer_text + " " + analysis["analyzeResult"]["readResults"][0]["lines"][i]["text"]
-    print(answer_text)
+    
     return answer_text
 
 def embed_text(text):
     vectors = session.run(embeddings, feed_dict={text_ph: text})
     return [vector.tolist() for vector in vectors]
 
-def getCandidateAnswerScore(answer_text):
-    candidateAnswer = input("Enter candidate answer: ")
-    candidateAnswerVector = embed_text([candidateAnswer])[0]
-    #candidateAnswerVector = embed_text([answer_text])[0]
-
+def getCandidateAnswerScore(question,answer_text):
+    #candidateAnswer = input("Enter candidate answer: ")
+    #candidateAnswerVector = embed_text([candidateAnswer])[0]
+    print("ques",question)
+    print("candidate ans",answer_text)
+    print("actual ans",questionAnswerList[question])
+    candidateAnswerVector = embed_text([answer_text])[0]
+  
     #correctAnswerVector = embed_text([questionAnswerList["What is operating system?"]])[0]
-    correctAnswerVector = embed_text([questionAnswerList["Study Test"]])[0]
-
+    correctAnswerVector = embed_text([questionAnswerList[question]])[0]
+   
     candidateAnswerVecto = []
     candidateAnswerVecto.append(candidateAnswerVector)
     correctAnswerVecto = []
@@ -120,26 +143,12 @@ def getCandidateAnswerScore(answer_text):
     print (f"Cosine Distance between A and B:{1-cos_sim}")
 
 def computeSimilarity(question, answer, documentURL):
-    '''
-    graph = tf.Graph()
-    print("Downloading pre-trained embeddings from tensorflow hub...")
-    tf.disable_eager_execution()
-    embed = hub.Module("https://tfhub.dev/google/universal-sentence-encoder/2")
-    text_ph = tf.placeholder(tf.string)
-    embeddings = embed(text_ph)
-    print("Done.")
-
-    print("Creating tensorflow session...")
-    session = tf.Session()
-    session.run(tf.global_variables_initializer())
-    session.run(tf.tables_initializer())
-    print("Done.")
-    '''
+  
     #createTensorflowSession()
     answer_text = ocrComputation(documentURL)
     #gettingQuestionAnswers()
 
-    getCandidateAnswerScore(answer_text)
+    getCandidateAnswerScore(question,answer)
     '''
     print("Closing tensorflow session...")
     session.close()
