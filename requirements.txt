@@ -18,5 +18,4 @@ tensorflow
 tensorflow_hub
 sklearn
 matplotlib
-io
 PIL
