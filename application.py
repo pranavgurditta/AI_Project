@@ -6,18 +6,6 @@ app = Flask(__name__)
 
 
 
-
-@app.route('/upload')
-def upload_file():
-   return render_template('upload.html')
-	
-@app.route('/uploader', methods = ['GET', 'POST'])
-def upload_file():
-   if request.method == 'POST':
-      f = request.files['file']
-      f.save(secure_filename(f.filename))
-      return 'file uploaded successfully'
-		
 @app.route("/")
 def home():
     return render_template("home.html")
