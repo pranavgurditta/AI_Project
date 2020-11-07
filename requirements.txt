@@ -14,5 +14,5 @@ matplotlib
 numpy
 oauth2client
 nltk
-
+tensorflow
 
